@@ -9,81 +9,85 @@ import org.springframework.stereotype.Service;
 
 import com.jbdl.library.LibraryManagement;
 import com.jbdl.library.entity.AuthorEntity;
-import com.jbdl.library.model.request.AuthorRequest;
+import com.jbdl.library.entity.BookEntity;
+import com.jbdl.library.model.request.BookRequest;
 
 @Service
-public class AuthorService {
+public class BookService {
 	
-	public String create(AuthorRequest detail) {
+	public String create(BookRequest detail) {
 		Session session = LibraryManagement.SESSION_FACTORY.openSession();
 		Transaction transaction = session.beginTransaction();
-		AuthorEntity entity = new AuthorEntity(
+		AuthorEntity authorEntity = new AuthorEntity();
+		BookEntity entity = new BookEntity(
 				0,
-				detail.getAge(), 
-				detail.getName(), 
-				detail.getEmail(),
-				detail.getCountry());
+				detail.getName(),
+				detail.getTotalPage(),
+				detail.getLanguage(),
+				detail.getAvailable(),
+				detail.getGenre(),
+				detail.getIsbnNo(),
+				detail.getPublishedDate(),
+				authorEntity);
 		session.save(entity);
 		session.flush();
 		transaction.commit();
 		session.close();
-		return "Author created";
+		return "Book created";
 	}
 
-	public List<AuthorEntity> readAll() {
+	public List<BookEntity> readAll() {
 		Session session = LibraryManagement.SESSION_FACTORY.openSession();
 		Transaction transaction = session.beginTransaction();
-		Query query = session.createQuery("from AuthorEntity");
-		List<AuthorEntity> entities = (List<AuthorEntity>) query.list();
+		Query query = session.createQuery("from BookEntity");
+		List<BookEntity> entities = (List<BookEntity>) query.list();
 		session.flush();
 		transaction.commit();
 		session.close();
 		return entities;
 	}
 
-	public AuthorEntity readById(int id) {
+	public BookEntity readById(int id) {
 		Session session = LibraryManagement.SESSION_FACTORY.openSession();
 		Transaction transaction = session.beginTransaction();
-		Query query = session.createQuery("from AuthorEntity where id=:id");
+		Query query = session.createQuery("from BookEntity where id=:id");
 		query.setParameter("id", id);
-		AuthorEntity entity = (AuthorEntity) query.uniqueResult();
+		BookEntity entity = (BookEntity) query.uniqueResult();
 		session.flush();
 		transaction.commit();
 		session.close();
 		return entity;
 	}
 
-	public String update(AuthorRequest detail, int id) {
+	public String update(BookRequest detail, int id) {
 		System.out.println(detail.toString());
 		Session session = LibraryManagement.SESSION_FACTORY.openSession();
 		Transaction transaction = session.beginTransaction();
-		AuthorEntity entity = readById(id);
+		BookEntity entity = readById(id);
 		if(entity==null) {
-			return "Author not found";
+			return "Book not found";
 		}
-		entity.setAge(detail.getAge()==0?entity.getAge():detail.getAge());
-		entity.setName(detail.getName()==null?entity.getName():detail.getName());
-		entity.setCountry(detail.getCountry()==null?entity.getCountry():detail.getCountry());
-		entity.setEmail(detail.getEmail()==null?entity.getEmail():detail.getEmail());
+//		entity.setAge(detail.getAge()==0?entity.getAge():detail.getAge());
+		
 		System.out.println(entity.toString());
 		session.saveOrUpdate(entity);
 		session.flush();
 		transaction.commit();
 		session.close();
-		return "Author updated";
+		return "Book updated";
 	}
 	
 	public String delete(int id) {
 		Session session = LibraryManagement.SESSION_FACTORY.openSession();
 		Transaction transaction = session.beginTransaction();
-		AuthorEntity entity = readById(id);
+		BookEntity entity = readById(id);
 		if(entity==null) {
-			return "Author not found";
+			return "Book not found";
 		}
 		session.delete(entity);
 		session.flush();
 		transaction.commit();
 		session.close();
-		return "Author deleted";
+		return "Book deleted";
 	}
 }

@@ -13,17 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jbdl.library.entity.AuthorEntity;
-import com.jbdl.library.model.request.AuthorRequest;
-import com.jbdl.library.model.response.AuthorResponse;
-import com.jbdl.library.service.AuthorService;
-import com.jbdl.library.service.AuthorService;
+import com.jbdl.library.entity.StudentEntity;
+import com.jbdl.library.model.request.StudentRequest;
+import com.jbdl.library.model.response.StudentResponse;
+import com.jbdl.library.service.StudentService;
 
 @RestController
-@RequestMapping("/author")
-public class AuthorController {
+@RequestMapping("/student")
+public class StudentController {
 	@Autowired
-	AuthorService service;
+	StudentService service;
 	
 	@GetMapping("/test")
 	public String test() {
@@ -31,45 +30,52 @@ public class AuthorController {
 	}
 	
 	@PostMapping("/create")
-	public String create(@RequestBody AuthorRequest req) {
+	public String create(@RequestBody StudentRequest req) {
 		return service.create(req);
 	}
 	
 	@GetMapping("/read")
-	public ArrayList<AuthorResponse> readAll() {
-		List<AuthorEntity> entities = service.readAll();
-		ArrayList<AuthorResponse> response =  new ArrayList<>();
+	public ArrayList<StudentResponse> readAll() {
+		List<StudentEntity> entities = service.readAll();
+		ArrayList<StudentResponse> response =  new ArrayList<>();
 		entities.forEach(entity -> {
-			response.add(new AuthorResponse(
+			response.add(new StudentResponse(
 					entity.getId(),
 					entity.getAge(),
 					entity.getName(),
 					entity.getCountry(),
-					entity.getEmail()));
+					entity.getEmail(),
+					entity.getPhoneNo(),
+					entity.getCreatedOn(),
+					entity.getUpdatedOn()));
 		});
 		return response;
 	}
 	
 	@GetMapping("/read/{id}")
-	public AuthorResponse readById(@PathVariable int id) {
-		AuthorResponse response;
+	public StudentResponse readById(@PathVariable int id) {
+		System.out.println("read student id:"+id);
+		StudentResponse response;
 		try {
-			AuthorEntity entity = service.readById(id);
-			response = new AuthorResponse(
+			StudentEntity entity = service.readById(id);
+			response = new StudentResponse(
 					entity.getId(),
 					entity.getAge(),
 					entity.getName(),
 					entity.getCountry(),
-					entity.getEmail());
+					entity.getEmail(),
+					entity.getPhoneNo(),
+					entity.getUpdatedOn(),
+					entity.getCreatedOn());
 		} catch (NullPointerException e) {
-			System.out.println("Author not found");
-			response = new AuthorResponse();
+			response = new StudentResponse();
 		}
+		System.out.println("response: "+response);
 		return response;
 	}
 	
 	@PutMapping("/update/{id}")
-	public String update(@PathVariable int id, @RequestBody AuthorRequest req) {
+	public String update(@PathVariable int id, @RequestBody StudentRequest req) {
 		return service.update(req, id);
 	}
 	
